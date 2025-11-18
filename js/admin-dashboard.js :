@@ -1,0 +1,201 @@
+// admin-dashboard.js - Tableau de bord administrateur complet
+
+// Vérification de la connexion au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+        window.location.href = 'admin-login.html';
+        return;
+    }
+    
+    // Afficher le nom de l'admin
+    const adminName = sessionStorage.getItem('adminUsername') || 'admin';
+    if (document.getElementById('adminName')) {
+        document.getElementById('adminName').textContent = adminName;
+    }
+    
+    // Charger les données du dashboard
+    loadDashboardData();
+    loadAffiliatesList();
+    loadAnnouncements();
+});
+
+// Navigation entre sections
+function showSection(sectionId) {
+    // Masquer toutes les sections
+    document.querySelectorAll('.admin-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Désactiver tous les boutons du menu
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Afficher la section sélectionnée
+    document.getElementById(sectionId).classList.add('active');
+    
+    // Activer le bouton du menu
+    event.target.classList.add('active');
+    
+    // Charger les données spécifiques à la section
+    if (sectionId === 'affiliates') {
+        loadAffiliatesList();
+    } else if (sectionId === 'payments') {
+        loadPayments();
+    }
+}
+
+// Déconnexion
+function logout() {
+    if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+        sessionStorage.removeItem('adminLoggedIn');
+        sessionStorage.removeItem('adminUsername');
+        window.location.href = 'admin-login.html';
+    }
+}
+
+// Chargement des données du dashboard
+function loadDashboardData() {
+    const affiliates = JSON.parse(localStorage.getItem('affiliates')) || [];
+    
+    // Calcul des statistiques
+    const totalCommissions = affiliates.reduce((sum, aff) => sum + (aff.commission || 0), 0);
+    const pendingPayments = affiliates.filter(aff => (aff.commission || 0) >= 50).length;
+    
+    // Mise à jour de l'interface
+    if (document.getElementById('totalAffiliates')) {
+        document.getElementById('totalAffiliates').textContent = affiliates.length;
+    }
+    if (document.getElementById('totalCommissions')) {
+        document.getElementById('totalCommissions').textContent = totalCommissions.toFixed(2) + '€';
+    }
+    if (document.getElementById('pendingPayments')) {
+        document.getElementById('pendingPayments').textContent = pendingPayments;
+    }
+    if (document.getElementById('monthlyRevenue')) {
+        document.getElementById('monthlyRevenue').textContent = totalCommissions.toFixed(2) + '€';
+    }
+}
+
+// Chargement de la liste des affiliés
+function loadAffiliatesList() {
+    const affiliates = JSON.parse(localStorage.getItem('affiliates')) || [];
+    const tbody = document.getElementById('affiliatesTableBody');
+    
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    affiliates.forEach((affiliate, index) => {
+        const commission = affiliate.commission || 0;
+        const sales = affiliate.sales || 0;
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${affiliate.id || 'AFF' + (index + 1)}</td>
+            <td>${affiliate.fullName || 'Non renseigné'}</td>
+            <td>${affiliate.email || 'Non renseigné'}</td>
+            <td>${sales}</td>
+            <td>${commission.toFixed(2)}€</td>
+            <td>
+                <span class="status ${commission >= 50 ? 'pending' : 'inactive'}">
+                    ${commission >= 50 ? 'À payer' : 'En attente'}
+                </span>
+            </td>
+            <td>
+                <button onclick="editAffiliate(${index})" class="btn-small">✏️</button>
+                <button onclick="deleteAffiliate(${index})" class="btn-small">🗑️</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Gestion des annonces
+function loadAnnouncements() {
+    const adminData = JSON.parse(localStorage.getItem('adminData')) || { annonces: [] };
+    const container = document.getElementById('activeAnnouncements');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    adminData.annonces.forEach((annonce, index) => {
+        const div = document.createElement('div');
+        div.className = 'annonce-item';
+        div.style.background = annonce.color;
+        div.style.color = 'white';
+        div.style.padding = '1rem';
+        div.style.margin = '0.5rem 0';
+        div.style.borderRadius = '5px';
+        div.style.display = 'flex';
+        div.style.justifyContent = 'space-between';
+        div.style.alignItems = 'center';
+        
+        div.innerHTML = `
+            <div>
+                <strong>${annonce.text}</strong>
+                <br><small>Publié le ${annonce.date}</small>
+            </div>
+            <button onclick="deleteAnnouncement(${index})" style="background: none; border: none; color: white; cursor: pointer;">×</button>
+        `;
+        
+        container.appendChild(div);
+    });
+}
+
+function publishAnnouncement() {
+    const text = document.getElementById('announcementText').value;
+    const color = document.getElementById('announcementColor').value;
+    
+    if (!text.trim()) {
+        alert('Veuillez entrer un texte pour l\'annonce');
+        return;
+    }
+    
+    const adminData = JSON.parse(localStorage.getItem('adminData')) || { annonces: [] };
+    
+    const annonce = {
+        id: Date.now(),
+        text: text,
+        color: color,
+        date: new Date().toLocaleDateString('fr-FR')
+    };
+    
+    adminData.annonces.push(annonce);
+    localStorage.setItem('adminData', JSON.stringify(adminData));
+    
+    // Recharger les annonces
+    loadAnnouncements();
+    
+    // Réinitialiser le formulaire
+    document.getElementById('announcementText').value = '';
+    
+    alert('Annonce publiée avec succès !');
+}
+
+function deleteAnnouncement(index) {
+    if (confirm('Supprimer cette annonce ?')) {
+        const adminData = JSON.parse(localStorage.getItem('adminData')) || { annonces: [] };
+        adminData.annonces.splice(index, 1);
+        localStorage.setItem('adminData', JSON.stringify(adminData));
+        loadAnnouncements();
+    }
+}
+
+// Styles pour les statuts
+const style = document.createElement('style');
+style.textContent = `
+    .status.pending { color: #e74c3c; font-weight: bold; }
+    .status.inactive { color: #95a5a6; }
+    .btn-small { 
+        background: #3498db; 
+        color: white; 
+        border: none; 
+        padding: 5px 10px; 
+        margin: 0 2px; 
+        border-radius: 3px; 
+        cursor: pointer; 
+    }
+`;
+document.head.appendChild(style);
