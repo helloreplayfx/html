@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - HelloReplay FX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <span>HelloReplay FX</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Accueil</a>
+            <a href="affiliation.html">Devenir Affilié</a>
+            <a href="admin-login.html">Espace Admin</a>
+            <a href="contact.html" class="active">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Contact Hero -->
+    <section class="contact-hero">
+        <div class="container">
+            <h1>Contactez-Nous</h1>
+            <p>Une question ? Notre équipe est là pour vous aider</p>
+        </div>
+    </section>
+
+    <!-- Contact Content -->
+    <section class="contact-content">
+        <div class="container">
+            <div class="contact-grid">
+                <!-- Contact Form -->
+                <div class="contact-form-container">
+                    <h2>📧 Envoyez-nous un message</h2>
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <label for="contactName">Votre nom *</label>
+                            <input type="text" id="contactName" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactEmail">Votre email *</label>
+                            <input type="email" id="contactEmail" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactSubject">Sujet *</label>
+                            <select id="contactSubject" name="subject" required>
+                                <option value="">Choisissez un sujet...</option>
+                                <option value="affiliation">Question affiliation</option>
+                                <option value="paiement">Problème de paiement</option>
+                                <option value="technique">Support technique</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactMessage">Votre message *</label>
+                            <textarea id="contactMessage" name="message" rows="5" required placeholder="Décrivez votre demande..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Envoyer le message</button>
+                    </form>
+
+                    <div id="contactSuccess" class="success-message" style="display: none;">
+                        <h3>✅ Message envoyé !</h3>
+                        <p>Nous vous répondrons dans les plus brefs délais.</p>
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="contact-info">
+                    <h2>📞 Nos coordonnées</h2>
+                    
+                    <div class="contact-method">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-details">
+                            <h3>Email</h3>
+                            <p>contact@helloreplayfx.com</p>
+                            <small>Réponse sous 24h</small>
+                        </div>
+                    </div>
+
+                    <div class="contact-method">
+                        <div class="contact-icon">💬</div>
+                        <div class="contact-details">
+                            <h3>Support Affiliés</h3>
+                            <p>support@helloreplayfx.com</p>
+                            <small>Dédié aux partenaires</small>
+                        </div>
+                    </div>
+
+                    <div class="contact-method">
+                        <div class="contact-icon">🕒</div>
+                        <div class="contact-details">
+                            <h3>Horaires</h3>
+                            <p>Lun - Ven : 9h - 18h</p>
+                            <small>Fuseau horaire : UTC+1</small>
+                        </div>
+                    </div>
+
+                    <div class="faq-section">
+                        <h3>❓ Questions Fréquentes</h3>
+                        <ul>
+                            <li><strong>Quand sont versées les commissions ?</strong><br>Les 5 de chaque mois</li>
+                            <li><strong>Quel est le seuil minimum de paiement ?</strong><br>50€ de commissions</li>
+                            <li><strong>Comment obtenir mon lien d'affiliation ?</strong><br>Après validation de votre inscription</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/contact.js"></script>
+</body>
+</html>
